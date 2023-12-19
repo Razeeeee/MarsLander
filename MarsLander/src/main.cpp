@@ -11,8 +11,8 @@ int main()
     window.setFramerateLimit(60);
 
     terrain terrain(&window);
-    terrain.setFrequencyModifier(1500.0f);
-    terrain.setAmplitudeModifier(0.2f);
+    terrain.setFrequencyModifier(2137.0f);
+    terrain.setAmplitudeModifier(0.3f);
     terrain.buildTerrain();
 
     while (window.isOpen())

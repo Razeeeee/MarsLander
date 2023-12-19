@@ -29,6 +29,9 @@ terrain::terrain(sf::RenderWindow* window) : renderWindow(window)
 	frequencyModifier = 1500.0f;
 	amplitudeModifier = 0.3f;
 
+	frequency = static_cast<float>(rand() % 2 + 4) / frequencyModifier;
+	amplitude = windowHeight * amplitudeModifier;
+
 	// initialize the random seed
 	srand(time(NULL));
 
@@ -37,11 +40,9 @@ terrain::terrain(sf::RenderWindow* window) : renderWindow(window)
 	y = static_cast<float>(rand() % 1000) / 1000.0f;
 	z = static_cast<float>(rand() % 1000) / 1000.0f;
 	noiseValue = 0.0f;
-	frequency = static_cast<float>(rand() % 2 + 4) / frequencyModifier;
-	amplitude = windowHeight * amplitudeModifier;
 	lacunarity = 2.0f;
 	persistence = 0.5f;
-	octaves = rand() % 6 + 4;
+	octaves = 4;
 
 	// initialize the landing zone candidates array
 	for (int i = 0; i < 3; ++i)
@@ -54,6 +55,10 @@ void terrain::generateTerrain()
 {
 	std::cout << "Generating terrain..." << std::endl;
 	SimplexNoise noise;
+
+	// generate the frequency and amplitude
+	frequency = static_cast<float>(rand() % 2 + 4) / frequencyModifier;
+	amplitude = windowHeight * amplitudeModifier;
 
 	// generate the terrain
 	for (int i = 0; i < windowWidth; ++i)
