@@ -144,6 +144,22 @@ void terrain::interpolateLandingZoneEdges()
 	}
 }
 
+void terrain::renderBackground()
+{
+	sf::Color startColor(162, 150, 146, 255);
+	sf::Color endColor(213, 202, 186, 255);
+	sf::VertexArray background(sf::Quads, 4);
+	background[0].position = sf::Vector2f(0, 0);
+	background[1].position = sf::Vector2f(windowWidth, 0);
+	background[2].position = sf::Vector2f(windowWidth, windowHeight);
+	background[3].position = sf::Vector2f(0, windowHeight);
+	background[0].color = startColor;
+	background[1].color = startColor;
+	background[2].color = endColor;
+	background[3].color = endColor;
+	renderWindow->draw(background);
+}
+
 void terrain::renderTerrain()
 {
 	for (int i = 0; i < windowWidth - 1; ++i)

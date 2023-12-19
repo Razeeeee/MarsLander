@@ -9,6 +9,8 @@ public:
 	terrain(sf::RenderWindow* window);
 	// rendering the terrain
 	void renderTerrain();
+	// rendering the background
+	void renderBackground();
 	// return the landing zone candidates array
 	void getLandingZoneCandidates(int* candidates);
 	// draw the landing zone candidates
