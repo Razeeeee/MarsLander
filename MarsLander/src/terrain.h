@@ -17,6 +17,8 @@ public:
 	void drawLandingZoneCandidates();
 	// build terrain
 	void buildTerrain();
+	// reset
+	void reset();
 
 	// getters and setters
 	void setFrequencyModifier(float frequencyModifier);

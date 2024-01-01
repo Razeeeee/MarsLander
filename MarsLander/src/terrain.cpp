@@ -9,8 +9,8 @@ terrain::terrain(sf::RenderWindow* window) : renderWindow(window)
 
 	// initialize the landing zone variables
 	landingWidth = windowWidth * 0.03f;
-	distanceBetweenLandingZones = windowWidth * 0.2f; // min distance between landing zones
-	distanceFromEdge = windowWidth * 0.1f; // min distance from the edge of the screen
+	distanceBetweenLandingZones = windowWidth * 0.1f; // min distance between landing zones
+	distanceFromEdge = windowWidth * 0.2f; // min distance from the edge of the screen
 
 	// initialize the terrain array
 	terrainArray = new float[windowWidth];
@@ -230,6 +230,34 @@ void terrain::buildTerrain()
 	interpolateLandingZoneEdges();
 
 	std::cout << "Terrain built in " << clock.getElapsedTime().asSeconds() << " seconds." << std::endl;
+}
+
+void terrain::reset()
+{
+	// reset the candidate values
+	candidateValue1 = 1000000.0f;
+	candidateValue2 = 1000000.0f;
+	candidateValue3 = 1000000.0f;
+
+	// reset the noise variables
+	x = static_cast<float>(rand() % 1000) / 1000.0f;
+	y = static_cast<float>(rand() % 1000) / 1000.0f;
+	z = static_cast<float>(rand() % 1000) / 1000.0f;
+
+	// reset the landing zone candidates array
+	for (int i = 0; i < 3; ++i)
+	{
+		candidates[i] = 0;
+	}
+
+	// reset the terrain array
+	for (int i = 0; i < windowWidth; ++i)
+	{
+		terrainArray[i] = 0.0f;
+	}
+
+	// rebuild the terrain
+	buildTerrain();
 }
 
 // getters and setters
