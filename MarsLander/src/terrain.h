@@ -2,60 +2,54 @@
 #include "SimplexNoise.h"
 #include "SFML/Graphics.hpp"
 
-class terrain
+class Terrain
 {
 public:
-	// constructor
-	terrain(sf::RenderWindow* window);
-	// rendering the terrain
+	Terrain(sf::RenderWindow* window);
+
+	// Rendering the terrain, background and landing zone candidates
 	void renderTerrain();
-	// rendering the background
 	void renderBackground();
-	// return the landing zone candidates array
-	void getLandingZoneCandidates(int* candidates);
-	// draw the landing zone candidates
-	void drawLandingZoneCandidates();
-	// build terrain
-	void buildTerrain();
-	// reset
+	void renderLandingZones();
+
+	// Building and resetting the terrain
+	void build();
 	void reset();
 
-	// getters and setters
+	// Getters
+	void getLandingZones(int* landingZones);
+	sf::Vector2i getLandingSize();
+	float getTerrainYatX(int x);
+
+	// Setters
 	void setFrequencyModifier(float frequencyModifier);
 	void setAmplitudeModifier(float amplitudeModifier);
 
 private:
-	// generate the terrain
+	// Terrain generation and landing zone candidate finding
 	void generateTerrain();
-	// find the best landing zone candidates
-	void findLandingZoneCandidates();
-	// flatten the landing zones
+	void findLandingZones();
 	void flattenLandingZones();
-	// interpolate the area around the landing zones for smoother transitions
 	void interpolateLandingZoneEdges();
 
-protected:
-	// window variables
 	sf::RenderWindow* renderWindow;
 	int windowWidth;
 	int windowHeight;
 
-	// terrain generation variables
 	float frequencyModifier;
 	float amplitudeModifier;
 
-	// landing zone variables
-	int landingWidth;
+	sf::Vector2i landingSize;
 	int distanceBetweenLandingZones;
 	int distanceFromEdge;
 	int interpolationWidth;
-	int candidates[3];
+
+	int landingZones[3];
 	float candidateValue1;
 	float candidateValue2;
 	float candidateValue3;
 	float* terrainArray;
 
-	// noise variables
 	float x;
 	float y;
 	float z;
