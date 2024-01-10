@@ -1,0 +1,87 @@
+#include "gameUI.h"
+
+GameUI::GameUI(sf::RenderWindow* window) : window(window)
+{
+	// Loading the font
+	font = sf::Font();
+	if (!font.loadFromFile("assets/fonts/retro.ttf"))
+	{
+		std::cout << "Error loading font" << std::endl;
+		exit(0);
+	}
+
+	// Setting up the text
+	horizontalSpeedText = sf::Text();
+	horizontalSpeedText.setFont(font);
+	horizontalSpeedText.setCharacterSize(30);
+	horizontalSpeedText.setFillColor(sf::Color::White);
+	horizontalSpeedText.setPosition(10, 10);
+
+	verticalSpeedText = sf::Text();
+	verticalSpeedText.setFont(font);
+	verticalSpeedText.setCharacterSize(30);
+	verticalSpeedText.setFillColor(sf::Color::White);
+	verticalSpeedText.setPosition(10, 46);
+
+	altitudeText = sf::Text();
+	altitudeText.setFont(font);
+	altitudeText.setCharacterSize(30);
+	altitudeText.setFillColor(sf::Color::White);
+	altitudeText.setPosition(10, 82);
+
+	scoreText = sf::Text();
+	scoreText.setFont(font);
+	scoreText.setCharacterSize(30);
+	scoreText.setFillColor(sf::Color::White);
+	scoreText.setPosition(10, 118);
+
+	// Setting up the fuel bar
+	fuelBar = sf::RectangleShape(sf::Vector2f(20.0f, window->getSize().y / 2));
+	fuelBar.setOrigin(fuelBar.getSize().x / 2, fuelBar.getSize().y);
+	fuelBar.setPosition(20, window->getSize().y / 2 - fuelBar.getSize().y / 2);
+	fuelBar.setFillColor(sf::Color::White);
+	fuelBar.rotate(180);
+
+	// Setting up the fuel bar outline
+	fuelBarOutline = sf::RectangleShape(sf::Vector2f(20.0f, window->getSize().y / 2));
+	fuelBarOutline.setOrigin(fuelBarOutline.getSize().x / 2, fuelBarOutline.getSize().y);
+	fuelBarOutline.setPosition(20, window->getSize().y / 2 + fuelBarOutline.getSize().y / 2);
+	fuelBarOutline.setFillColor(sf::Color::Transparent);
+	fuelBarOutline.setOutlineColor(sf::Color::White);
+	fuelBarOutline.setOutlineThickness(4.0f);
+}
+
+void GameUI::update(sf::Vector2f velocity, float altitudeAboveTerrain, float fuel, float score)
+{
+	// Calculating the absolute value of the velocity as an integer
+	sf::Vector2i veloctyIntAbs = sf::Vector2i(std::abs(velocity.x), std::abs(velocity.y));
+	// Updating the text
+	horizontalSpeedText.setString("Horizontal Speed: " + std::to_string(veloctyIntAbs.x) + " m/s");
+	verticalSpeedText.setString("Vertical Speed: " + std::to_string(veloctyIntAbs.y) + " m/s");
+
+	// Calculating the absolute value of the altitude as an integer
+	int altitude = (int)fabs(altitudeAboveTerrain);
+	// Making sure the altitude is not negative
+	if(altitude < 0) altitude = 0;
+	// Updating the text
+	altitudeText.setString("Altitude: " + std::to_string(altitude) + " m");
+
+	// Updating the fuel bar
+	fuelBar.setSize(sf::Vector2f(20.0f, window->getSize().y / 2 * (fuel / 100.0f)));
+
+	// Updating the score text
+	scoreText.setString("Score: " + std::to_string((int)score));
+}
+
+void GameUI::draw()
+{
+	// Drawing the text
+	window->draw(horizontalSpeedText);
+	window->draw(verticalSpeedText);
+	window->draw(altitudeText);
+	window->draw(scoreText);
+
+	// Drawing the fuel bar
+	window->draw(fuelBar);
+	window->draw(fuelBarOutline);
+}

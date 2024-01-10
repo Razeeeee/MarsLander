@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\gameUI.cpp" />
     <ClCompile Include="src\gameplay.cpp" />
     <ClCompile Include="src\rigidbody.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -147,6 +148,7 @@
     <ClCompile Include="src\terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\gameUI.h" />
     <ClInclude Include="src\gameplay.h" />
     <ClInclude Include="src\rigidbody.h" />
     <ClInclude Include="src\SimplexNoise.h" />

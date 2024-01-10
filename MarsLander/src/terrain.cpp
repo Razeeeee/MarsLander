@@ -3,39 +3,42 @@
 
 Terrain::Terrain(sf::RenderWindow* window) : renderWindow(window)
 {
-	// get the window width and height
+	// Getting the window size
 	windowWidth = renderWindow->getSize().x;
 	windowHeight = renderWindow->getSize().y;
 
-	// initialize the landing zone variables
+	// Initializing the landing zone properties
 	landingSize = sf::Vector2i((int)(windowWidth * 0.03f), (int)(windowWidth * 0.03f / 8));
-	distanceBetweenLandingZones = windowWidth * 0.1f; // min distance between landing zones
-	distanceFromEdge = windowWidth * 0.2f; // min distance from the edge of the screen
+	distanceBetweenLandingZones = windowWidth * 0.1f; // Min. distance between landing zones
+	distanceFromEdge = windowWidth * 0.2f; // Min. distance from the edge of the screen
+	interpolationWidth = landingSize.x * 0.25f; // Width of the area to interpolate around the landing zone
+	for (int i = 0; i < 3; ++i)
+	{
+		landingZones[i] = 0; // Initializing the landing zones array
+	}
 
-	// initialize the terrain array
+	// Creating the terrain array
 	terrainArray = new float[windowWidth];
 
-	// initialize the candidate values
-	// will be used to find the best landing zone candidates
+	// Initializing the candidate values
+	// They will be used to find the best landing zone candidates
 	candidateValue1 = 1000000.0f;
 	candidateValue2 = 1000000.0f;
 	candidateValue3 = 1000000.0f;
-	
-	// initialize the interpolation width
-	// the width of the area around the landing zone that will be interpolated
-	interpolationWidth = landingSize.x * 0.25f;
 
-	// initialize the noise variables - change for different results and/or difficulty
+	// Initializing the noise variables
+	// Noise variables can be later changed to create difficulty terrain
 	frequencyModifier = 1500.0f;
 	amplitudeModifier = 0.3f;
 
+	// Using the modifiers to generate the frequency and amplitude
 	frequency = static_cast<float>(rand() % 2 + 4) / frequencyModifier;
 	amplitude = windowHeight * amplitudeModifier;
 
-	// initialize the random seed
+	// Initializing a random seed
 	srand(time(NULL));
 
-	// initialize the noise variables
+	// Creating the Simplex noise variables
 	x = static_cast<float>(rand() % 1000) / 1000.0f;
 	y = static_cast<float>(rand() % 1000) / 1000.0f;
 	z = static_cast<float>(rand() % 1000) / 1000.0f;
@@ -43,12 +46,6 @@ Terrain::Terrain(sf::RenderWindow* window) : renderWindow(window)
 	lacunarity = 2.0f;
 	persistence = 0.5f;
 	octaves = 4;
-
-	// initialize the landing zone candidates array
-	for (int i = 0; i < 3; ++i)
-	{
-		landingZones[i] = 0;
-	}
 }
 
 void Terrain::generateTerrain()
@@ -56,16 +53,16 @@ void Terrain::generateTerrain()
 	std::cout << "Generating terrain..." << std::endl;
 	SimplexNoise noise;
 
-	// generate the frequency and amplitude
+	// Calculate the frequency and amplitude again (could have been changed)
 	frequency = static_cast<float>(rand() % 2 + 4) / frequencyModifier;
 	amplitude = windowHeight * amplitudeModifier;
 
-	// generate the terrain
+	// Generating the terrain using Simplex noise
 	for (int i = 0; i < windowWidth; ++i)
 	{
 		noiseValue = noise.fractal(octaves, x, y, z);
-		// the noise value is between -1 and 1
-		// to make terrain just above the bottom of the screen, we adjust the value
+		// The noise value is between -1 and 1
+		// Adjusting the value to be properly placed on the screen
 		terrainArray[i] = windowHeight - noiseValue * amplitude - amplitude;
 		
 		x += frequency;
@@ -74,10 +71,12 @@ void Terrain::generateTerrain()
 
 void Terrain::findLandingZones()
 {
-	// each candidate is found by finding the lowest difference in height between two points
-	// the first one has no other restrictions
-	// the second one cannot be within a certain distance of the first one
-	// the third one cannot be within a certain distance of the first or second one
+	/*
+	Each candidate is found by finding the lowest difference in height between two points
+	The first one has no other restrictions
+	The second one cannot be within a certain distance of the first one
+	The third one cannot be within a certain distance of the first or second one
+	*/
 
 	std::cout << "Finding landing zone candidates..." << std::endl;
 	for (int i = distanceFromEdge; i < windowWidth - landingSize.x - distanceFromEdge; ++i)
@@ -126,9 +125,10 @@ void Terrain::flattenLandingZones()
 	std::cout << "Flattening landing zones..." << std::endl;
 	for (int i = 0; i < 3; ++i)
 	{
+		// For the whole length of the landing zone
 		for (int j = landingZones[i]; j < landingZones[i] + landingSize.x; ++j)
 		{
-			// flattening the landing zone to the height of the first point
+			// Flattening the landing zone
 			terrainArray[j] = terrainArray[landingZones[i]];
 		}
 	}
@@ -139,11 +139,10 @@ void Terrain::interpolateLandingZoneEdges()
 	std::cout << "Interpolating landing zone edges..." << std::endl;
 	for (int i = 0; i < 3; ++i)
 	{
-		// interpolating the area around the landing zone for smoother transitions
-		// using linear interpolation
+		// Interpolating the area around the landing zone for smoother transitions using lerp
 		for (int j = 0; j < interpolationWidth; ++j)
 		{
-			// interpolate separate for the left and right edges
+			// Interpolate separate for the left and right edges
 			terrainArray[landingZones[i] - j] = terrainArray[landingZones[i]] + (terrainArray[landingZones[i] - interpolationWidth] - terrainArray[landingZones[i]]) * (static_cast<float>(j) / static_cast<float>(interpolationWidth));
 			terrainArray[landingZones[i] + landingSize.x + j] = terrainArray[landingZones[i] + landingSize.x] + (terrainArray[landingZones[i] + landingSize.x + interpolationWidth] - terrainArray[landingZones[i] + landingSize.x]) * (static_cast<float>(j) / static_cast<float>(interpolationWidth));
 		}
@@ -152,6 +151,7 @@ void Terrain::interpolateLandingZoneEdges()
 
 void Terrain::renderBackground()
 {
+	// Rendering the background as a vertical gradient
 	sf::Color startColor(162, 150, 146, 255);
 	sf::Color endColor(213, 202, 186, 255);
 	sf::VertexArray background(sf::Quads, 4);
@@ -170,8 +170,7 @@ void Terrain::renderTerrain()
 {
 	for (int i = 0; i < windowWidth - 1; ++i)
 	{
-		// renders the terrain as a series of lines between points in the terrain array
-		// doesn't draw the landing zone candidates
+		// Rendering the terrain as a series of lines between points in the terrain array
 		sf::Vertex line[] =
 		{
 			sf::Vertex(sf::Vector2f(i, terrainArray[i]), sf::Color(171, 120, 96, 255)),
@@ -181,8 +180,7 @@ void Terrain::renderTerrain()
 		if(i <= landingZones[0] || i >= landingZones[0] + landingSize.x)
 			renderWindow->draw(line, 2, sf::Lines);
 
-		// fill in the area below the terrain curve
-		// make it a vertical gradient from sf::Color(172,133,105,255) to sf::Color(149,103,85,255)
+		// Filling in the area below the terrain curve with the gradient
 		sf::Color startColor(172, 133, 105, 255);
 		sf::Color endColor(149, 103, 85, 255);
 		sf::VertexArray background(sf::Quads, 4);
@@ -200,7 +198,7 @@ void Terrain::renderTerrain()
 
 void Terrain::getLandingZones(int* candidates)
 {
-	// returns the landing zone candidates array
+	// Returns the landing zone candidates array
 	for (int i = 0; i < 3; ++i)
 	{
 		candidates[i] = this->landingZones[i];
@@ -211,6 +209,7 @@ void Terrain::renderLandingZones()
 {
 	for (int i = 0; i < 3; ++i)
 	{
+		// Rendering the landing zones as rectangles
 		sf::RectangleShape rectangle(sf::Vector2f(landingSize.x, landingSize.x / 8));
 		rectangle.setPosition(landingZones[i], terrainArray[landingZones[i]] - landingSize.x / 8);
 		rectangle.setFillColor(sf::Color(103, 98, 96, 255));
@@ -220,11 +219,11 @@ void Terrain::renderLandingZones()
 
 void Terrain::build()
 {
-	// clock that measures the time it takes to build the terrain
+	// Clock that measures the time it takes to build the terrain
 	sf::Clock clock;
 	clock.restart();
 
-	// combine the functions above
+	// Building the terrain 
 	generateTerrain();
 	findLandingZones();
 	flattenLandingZones();
@@ -235,33 +234,32 @@ void Terrain::build()
 
 void Terrain::reset()
 {
-	// reset the candidate values
+	// Resetting the candidate values
 	candidateValue1 = 1000000.0f;
 	candidateValue2 = 1000000.0f;
 	candidateValue3 = 1000000.0f;
 
-	// reset the noise variables
+	// Resetting the noise variables
 	x = static_cast<float>(rand() % 1000) / 1000.0f;
 	y = static_cast<float>(rand() % 1000) / 1000.0f;
 	z = static_cast<float>(rand() % 1000) / 1000.0f;
 
-	// reset the landing zone candidates array
+	// Resetting the landing zones array
 	for (int i = 0; i < 3; ++i)
 	{
 		landingZones[i] = 0;
 	}
 
-	// reset the terrain array
+	// Resetting the terrain array
 	for (int i = 0; i < windowWidth; ++i)
 	{
 		terrainArray[i] = 0.0f;
 	}
 
-	// rebuild the terrain
+	// Rebuilding the terrain
 	build();
 }
 
-// getters and setters
 void Terrain::setFrequencyModifier(float frequencyModifier)
 {
 	this->frequencyModifier = frequencyModifier;

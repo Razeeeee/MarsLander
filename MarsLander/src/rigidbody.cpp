@@ -2,7 +2,7 @@
 
 Rigidbody::Rigidbody(sf::Shape* shape, sf::RenderWindow* window) : shape(shape), window(window)
 {
-	// Set initial values
+	// Setting up the initial values
 	position = shape->getPosition();
 	velocity = sf::Vector2f(0, 0);
 	acceleration = sf::Vector2f(0, 0);
@@ -16,9 +16,11 @@ Rigidbody::Rigidbody(sf::Shape* shape, sf::RenderWindow* window) : shape(shape),
 	angularAcceleration = 0;
 	torque = 0;
 	impulseTorque = 0;
+	// Calculating the inertia according to the shape
 	inertia = 1 / 12.0f * mass * (shape->getGlobalBounds().getSize().x * shape->getGlobalBounds().getSize().x + shape->getGlobalBounds().getSize().y * shape->getGlobalBounds().getSize().y);
 	angularDrag = 0;
 
+	// Calculating the upVector
 	upVector = sf::Vector2f(sin(rotation * 3.14159f / 180), -cos(rotation * 3.14159f / 180));
 
 	boundingBoxSize = shape->getGlobalBounds().getSize();
@@ -51,6 +53,7 @@ void Rigidbody::update(float dt)
 	// Calculate rotation
 	rotation += angularVelocity * dt;
 
+	// Keep rotation between 0 and 360
 	while (rotation > 360)
 	{
 		rotation -= 360;
@@ -152,6 +155,7 @@ void Rigidbody::setAngularDrag(float angularDrag)
 
 void Rigidbody::applyImpulseForceAtOffset(sf::Vector2f impulseForce, sf::Vector2f offset)
 {
+	// Force at an offset causes torque
 	this->impulseForce += impulseForce;
 	this->impulseTorque += offset.x * impulseForce.y - offset.y * impulseForce.x;
 }
