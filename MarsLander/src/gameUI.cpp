@@ -54,10 +54,14 @@ GameUI::GameUI(sf::RenderWindow* window) : window(window)
 void GameUI::update(sf::Vector2f velocity, float altitudeAboveTerrain, float fuel, float score)
 {
 	// Calculating the absolute value of the velocity as an integer
-	sf::Vector2i veloctyIntAbs = sf::Vector2i(std::abs(velocity.x), std::abs(velocity.y));
+	sf::Vector2i velocityIntAbs = sf::Vector2i(std::abs(velocity.x), std::abs(velocity.y));
 	// Updating the text
-	horizontalSpeedText.setString("Horizontal Speed: " + std::to_string(veloctyIntAbs.x) + " m/s");
-	verticalSpeedText.setString("Vertical Speed: " + std::to_string(veloctyIntAbs.y) + " m/s");
+	if(velocityIntAbs.x <= 10) horizontalSpeedText.setFillColor(sf::Color::Green);
+	else horizontalSpeedText.setFillColor(sf::Color::White);
+	if(velocityIntAbs.y <= 10) verticalSpeedText.setFillColor(sf::Color::Green);
+	else verticalSpeedText.setFillColor(sf::Color::White);
+	horizontalSpeedText.setString("Horizontal Speed: " + std::to_string(velocityIntAbs.x) + " m/s");
+	verticalSpeedText.setString("Vertical Speed: " + std::to_string(velocityIntAbs.y) + " m/s");
 
 	// Calculating the absolute value of the altitude as an integer
 	int altitude = (int)fabs(altitudeAboveTerrain);

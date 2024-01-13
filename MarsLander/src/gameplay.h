@@ -32,6 +32,8 @@ private:
 	float fuel;
 	float score;
 
+	float gameEndTimer;
+
 public:
 	Gameplay(sf::RenderWindow* window);
 

@@ -55,6 +55,8 @@ Gameplay::Gameplay(sf::RenderWindow* window) : window(window)
 	thrust = 0.0f;
 	// Setting the player's mass
 	player->setMass(500.0f + fuel);
+
+	gameEndTimer = 0.0f;
 }
 
 void Gameplay::update(float deltaTime)
@@ -105,16 +107,50 @@ void Gameplay::update(float deltaTime)
 			if (corners[i].x > landingZones[p] &&
 				corners[i].x < landingZones[p] + landingZoneWidth)
 			{
-				//---------------------------------------------------------------------------------
-				// Add condition to see if player is FULLY above the landing, if not, trigger crash
-				//---------------------------------------------------------------------------------
-				
 				// If the player is above a landing zone, set isAboveLandingZone to true
 				isAboveLandingZone = true;
 
 				// Checking if the player is below the landing zone (landed)
 				if (lowestY > terrainYatPlayer - landingZoneWidth / 8)
 				{
+					if (playerPos.x - playerSize.x / 2 < landingZones[p] || playerPos.x + playerSize.x / 2 > landingZones[p] + landingZoneWidth)
+					{
+						std::cout << "CRASHED" << std::endl;
+						player->setPosition(sf::Vector2f(window->getSize().x / 6, window->getSize().y / 6));
+						player->setAcceleration(sf::Vector2f(0, 0));
+						player->setAngularVelocity(0);
+						player->setAngularAcceleration(0);
+						player->setVelocity(sf::Vector2f(100.0f, 0));
+						player->setRotation(270);
+						player->setDrag(0.03f);
+
+						fuel = 100.0f;
+						score = 0.0f;
+						thrust = 0.0f;
+						player->setMass(500.0f + fuel);
+
+						return;
+					}
+					
+					if (player->getVelocity().x > 10.0f || player->getVelocity().x < -10.0f || player->getVelocity().y > 10.0f || player->getVelocity().y < -10.0f || player->getRotation() > 10.0f || player->getRotation() > 350.0f)
+					{
+						std::cout << "CRASHED" << std::endl;
+						player->setPosition(sf::Vector2f(window->getSize().x / 6, window->getSize().y / 6));
+						player->setAcceleration(sf::Vector2f(0, 0));
+						player->setAngularVelocity(0);
+						player->setAngularAcceleration(0);
+						player->setVelocity(sf::Vector2f(100.0f, 0));
+						player->setRotation(270);
+						player->setDrag(0.03f);
+
+						fuel = 100.0f;
+						score = 0.0f;
+						thrust = 0.0f;
+						player->setMass(500.0f + fuel);
+
+						return;
+					}	
+
 					// If the player is landed, reset player's position and velocity
 					player->setVelocity(sf::Vector2f(0, 0));
 					player->setPosition(sf::Vector2f(playerPos.x, terrainYatPlayer - playerSize.y / 2 - landingZoneWidth / 8));
@@ -128,6 +164,31 @@ void Gameplay::update(float deltaTime)
 					float distanceFromCenter = std::sqrt(distanceFromCenterX * distanceFromCenterX + distanceFromCenterY * distanceFromCenterY);
 
 					score = (distanceFromCenter * 0.25f + fuel) * 100.0f;
+					
+					keyState.isUpPressed = false;
+					keyState.isLeftPressed = false;
+					keyState.isRightPressed = false;
+					gameEndTimer += deltaTime;
+					if (gameEndTimer > 10.0f)
+					{
+						std::cout << "LANDED" << std::endl;
+						player->setPosition(sf::Vector2f(window->getSize().x / 6, window->getSize().y / 6));
+						player->setAcceleration(sf::Vector2f(0, 0));
+						player->setAngularVelocity(0);
+						player->setAngularAcceleration(0);
+						player->setVelocity(sf::Vector2f(100.0f, 0));
+						player->setRotation(270);
+						player->setDrag(0.03f);
+
+						fuel = 100.0f;
+						score = 0.0f;
+						thrust = 0.0f;
+						player->setMass(500.0f + fuel);
+
+						gameEndTimer = 0.0f;
+
+						return;
+					}
 				}
 			}
 		}
@@ -141,6 +202,7 @@ void Gameplay::update(float deltaTime)
 	{
 		if (corners[i].y > terrain->getTerrainYatX(corners[i].x))
 		{
+			std::cout << "CRASHED" << std::endl;
 			// If collided with terrain, reset player to starting state
 			player->setPosition(sf::Vector2f(window->getSize().x / 6, window->getSize().y / 6));
 			player->setAcceleration(sf::Vector2f(0, 0));
@@ -151,6 +213,9 @@ void Gameplay::update(float deltaTime)
 			player->setDrag(0.03f);
 
 			fuel = 100.0f;
+			score = 0.0f;
+			thrust = 0.0f;
+			player->setMass(500.0f + fuel);
 		}
 	}
 
@@ -164,7 +229,7 @@ void Gameplay::update(float deltaTime)
 			player->applyImpulseForce(upVector * 4500.0f * thrust);
 
 			// Decreasing the player's fuel
-			fuel -= 3.5f * deltaTime;
+			fuel -= 3.5f * deltaTime * thrust;
 			// Setting the player's mass
 			player->setMass(500.0f + fuel);
 		}
