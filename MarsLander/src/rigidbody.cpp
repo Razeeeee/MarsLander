@@ -24,6 +24,22 @@ Rigidbody::Rigidbody(sf::Shape* shape, sf::RenderWindow* window) : shape(shape),
 	upVector = sf::Vector2f(sin(rotation * 3.14159f / 180), -cos(rotation * 3.14159f / 180));
 
 	boundingBoxSize = shape->getGlobalBounds().getSize();
+	shapeTexture = new sf::Texture();
+	shapeTexture->loadFromFile("assets/sprites/rocket.png");
+	float shapeTextureProportions = shapeTexture->getSize().y / shapeTexture->getSize().x;
+	shape->setScale(sf::Vector2f(1, shapeTextureProportions));
+	shape->setTexture(shapeTexture);
+
+	fireShape = new sf::RectangleShape(sf::Vector2f(boundingBoxSize.x * 0.5f, boundingBoxSize.x * 0.5f));
+	fireShape->setOrigin(sf::Vector2f(fireShape->getGlobalBounds().getSize().x / 2, fireShape->getGlobalBounds().getSize().y));
+	fireTexture = new sf::Texture();
+	fireTexture->loadFromFile("assets/sprites/fire.png");
+	float fireTextureProportions = shapeTexture->getSize().y / shapeTexture->getSize().x;
+	fireShape->setScale(sf::Vector2f(1, fireTextureProportions));
+	fireShape->setTexture(fireTexture);
+	fireShape->setPosition(sf::Vector2f(0, boundingBoxSize.y / 2));
+
+	boundingBoxSize = sf::Vector2f(boundingBoxSize.x, boundingBoxSize.x * shapeTextureProportions * 0.975f);
 }
 
 void Rigidbody::update(float dt)
@@ -63,6 +79,14 @@ void Rigidbody::update(float dt)
 	impulseForce = sf::Vector2f(0, 0);
 	impulseTorque = 0;
 
+	// According to the rotation, find the correct place to put the fire (the fire is always at the bottom of the rocket)
+	sf::Transform fireTransform;
+	fireTransform.rotate(rotation);
+	sf::Vector2f fireRotatedOffset = fireTransform.transformPoint(sf::Vector2f(0, boundingBoxSize.y / 2 + fireShape->getGlobalBounds().getSize().y / 2));
+	sf::Vector2f firePosition = position + fireRotatedOffset;
+	fireShape->setPosition(firePosition);
+	fireShape->setRotation(rotation);
+
 	// Update shape
 	shape->setPosition(position);
 	shape->setRotation(rotation);
@@ -70,7 +94,9 @@ void Rigidbody::update(float dt)
 
 void Rigidbody::draw()
 {
+	window->draw(*fireShape);
 	window->draw(*shape);
+
 }
 
 void Rigidbody::setPosition(sf::Vector2f position)
@@ -228,6 +254,11 @@ sf::Vector2f Rigidbody::getUpVector()
 sf::Shape* Rigidbody::getShape()
 {
 	return shape;
+}
+
+sf::Shape* Rigidbody::getFireShape()
+{
+	return fireShape;
 }
 
 sf::Vector2f Rigidbody::getBoundingBoxSize()

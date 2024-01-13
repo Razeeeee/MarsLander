@@ -28,6 +28,7 @@ private:
 	int* landingZones;
 
 	Rigidbody* player;
+	float thrust;
 	float fuel;
 	float score;
 

@@ -54,4 +54,12 @@
   <ItemGroup>
     <Font Include="assets\fonts\retro.ttf" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\sprites\rocket.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\sprites\fire.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

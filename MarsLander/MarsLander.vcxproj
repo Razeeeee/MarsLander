@@ -157,6 +157,10 @@
   <ItemGroup>
     <Font Include="assets\fonts\retro.ttf" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\sprites\fire.png" />
+    <Image Include="assets\sprites\rocket.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

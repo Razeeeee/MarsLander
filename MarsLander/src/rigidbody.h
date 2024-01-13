@@ -9,6 +9,11 @@ private:
 	sf::RenderWindow* window;
 	sf::Shape* shape;
 	sf::Vector2f boundingBoxSize;
+	sf::Texture* shapeTexture;
+
+	sf::Shape* fireShape;
+	sf::Texture* fireTexture;
+
 
 	// Kinematics and dynamics variables
 	sf::Vector2f position;
@@ -73,6 +78,7 @@ public:
 
 	sf::Vector2f getUpVector();
 	sf::Shape* getShape();
+	sf::Shape* getFireShape();
 
 	sf::Vector2f getBoundingBoxSize();
 	void setFillColor(sf::Color color);

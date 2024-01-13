@@ -8,12 +8,13 @@ int main()
     const int WINDOW_WIDTH = 1920;
     const int WINDOW_HEIGHT = 1080;
 
+    sf::ContextSettings settings;
+    //settings.antialiasingLevel = 8;
+
     // Creating the window 
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Mars Lander", sf::Style::Fullscreen);
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Mars Lander", sf::Style::Fullscreen, settings);
     // Changing the window settings
     window.setFramerateLimit(120);
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = 8;
 
     // Creating the gameplay
     Gameplay gameplay(&window);

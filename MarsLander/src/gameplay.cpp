@@ -38,7 +38,6 @@ Gameplay::Gameplay(sf::RenderWindow* window) : window(window)
 	sf::RectangleShape* playerShape = new sf::RectangleShape(sf::Vector2f(20.0f, 20.0f));
 	playerShape->setOrigin(playerShape->getSize().x / 2, playerShape->getSize().y / 2);
 	playerShape->setPosition(window->getSize().x / 6, window->getSize().y / 6);
-	playerShape->setFillColor(sf::Color::Red);
 
 	// Creating the player rigidbody
 	player = new Rigidbody(playerShape, window);
@@ -53,12 +52,18 @@ Gameplay::Gameplay(sf::RenderWindow* window) : window(window)
 	// Setting the player's fuel
 	fuel = 100.0f;
 	score = 0.0f;
+	thrust = 0.0f;
 	// Setting the player's mass
 	player->setMass(500.0f + fuel);
 }
 
 void Gameplay::update(float deltaTime)
 {
+	thrust -= deltaTime * 1.5f;
+	if(thrust < 0.0f) thrust = 0.0f;
+	if(fuel > 0.0f) player->getFireShape()->setScale(sf::Vector2f(1, thrust));
+	else player->getFireShape()->setScale(sf::Vector2f(0, 0));
+
 	// Getting the player's position and size
     sf::Vector2f playerPos = player->getPosition();
     sf::Vector2f playerSize = player->getBoundingBoxSize();
@@ -100,6 +105,10 @@ void Gameplay::update(float deltaTime)
 			if (corners[i].x > landingZones[p] &&
 				corners[i].x < landingZones[p] + landingZoneWidth)
 			{
+				//---------------------------------------------------------------------------------
+				// Add condition to see if player is FULLY above the landing, if not, trigger crash
+				//---------------------------------------------------------------------------------
+				
 				// If the player is above a landing zone, set isAboveLandingZone to true
 				isAboveLandingZone = true;
 
@@ -114,8 +123,8 @@ void Gameplay::update(float deltaTime)
 					player->setRotation(0);
 
 					// Get player's distance from the center of the screen both horizontally and vertically
-					float distanceFromCenterX = std::abs(playerPos.x - window->getSize().x / 2);
-					float distanceFromCenterY = std::abs(playerPos.y - window->getSize().y / 2);
+					float distanceFromCenterX = std::abs(playerPos.x - 5 * window->getSize().x / 8);
+					float distanceFromCenterY = std::abs(playerPos.y - window->getSize().y / 3);
 					float distanceFromCenter = std::sqrt(distanceFromCenterX * distanceFromCenterX + distanceFromCenterY * distanceFromCenterY);
 
 					score = (distanceFromCenter * 0.25f + fuel) * 100.0f;
@@ -146,12 +155,13 @@ void Gameplay::update(float deltaTime)
 	}
 
 	// Applying forces to the player based on the key state
-    if (keyState.isUpPressed)
+	if(keyState.isUpPressed) thrust = 1.0f;
+    if (thrust > 0)
     {
 		if (fuel > 0.0f)
 		{
 			sf::Vector2f upVector = player->getUpVector();
-			player->applyImpulseForce(upVector * 4500.0f);
+			player->applyImpulseForce(upVector * 4500.0f * thrust);
 
 			// Decreasing the player's fuel
 			fuel -= 3.5f * deltaTime;
