@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\saveManager.cpp" />
     <ClCompile Include="src\endMenu.cpp" />
     <ClCompile Include="src\menu.cpp" />
     <ClCompile Include="src\gameUI.cpp" />
@@ -151,6 +152,7 @@
     <ClCompile Include="src\terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\saveManager.h" />
     <ClInclude Include="src\endMenu.h" />
     <ClInclude Include="src\menu.h" />
     <ClInclude Include="src\gameUI.h" />
@@ -167,6 +169,9 @@
     <Image Include="assets\images\background.jpg" />
     <Image Include="assets\sprites\fire.png" />
     <Image Include="assets\sprites\rocket.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="saves\savegame" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

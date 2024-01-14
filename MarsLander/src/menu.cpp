@@ -108,6 +108,26 @@ Menu::Menu(sf::RenderWindow* window, SceneManager* sceneManager) : window(window
 
         "Press 'ESC' to go back to the main menu.");
     helpContent.setPosition(30, 30);
+
+    SaveManager save("savegame");
+    int moonHS = save.getMoonHS();
+    int marsHS = save.getMarsHS();
+    std::cout << "Gotten moon HS: " << moonHS << std::endl;
+    std::cout << "Gotten mars HS: " << marsHS << std::endl;
+
+    moonHSText.setFont(font);
+    moonHSText.setCharacterSize(40);
+    moonHSText.setFillColor(sf::Color::White);
+    moonHSText.setString("Moon highscore: " + std::to_string(moonHS));
+    moonHSText.setOrigin(moonHSText.getLocalBounds().width, moonHSText.getLocalBounds().height / 2);
+    moonHSText.setPosition(window->getSize().x - 40, 30);
+
+    marsHSText.setFont(font);
+    marsHSText.setCharacterSize(40);
+    marsHSText.setFillColor(sf::Color::White);
+    marsHSText.setString("Mars highscore: " + std::to_string(marsHS));
+    marsHSText.setOrigin(moonHSText.getLocalBounds().width, marsHSText.getLocalBounds().height / 2);
+    marsHSText.setPosition(window->getSize().x - 40, 70);
 }
 
 void Menu::handleEvent(sf::Event event)
@@ -125,6 +145,17 @@ void Menu::handleEvent(sf::Event event)
                     gameState = DifficultySelection;
                 }
                 else if (isMouseOverText(helpButton, *window)) {
+                    SaveManager save("savegame");
+                    int moonHS = save.getMoonHS();
+                    int marsHS = save.getMarsHS();
+                    std::cout << "Gotten moon HS: " << moonHS << std::endl;
+                    std::cout << "Gotten mars HS: " << marsHS << std::endl;
+                    moonHSText.setString("Moon highscore: " + std::to_string(moonHS));
+                    moonHSText.setOrigin(moonHSText.getLocalBounds().width, moonHSText.getLocalBounds().height / 2);
+                    moonHSText.setPosition(window->getSize().x - 40, 30);
+                    marsHSText.setString("Mars highscore: " + std::to_string(marsHS));
+                    marsHSText.setOrigin(moonHSText.getLocalBounds().width, marsHSText.getLocalBounds().height / 2);
+                    marsHSText.setPosition(window->getSize().x - 40, 70);
                     handleHelpButtonClick(gameState);
                 }
                 else if (isMouseOverText(exitButton, *window)) {
@@ -264,6 +295,8 @@ void Menu::render()
 
     case HelpMenu:
         window->draw(helpContent);
+        window->draw(moonHSText);
+        window->draw(marsHSText);
         window->draw(backToMenuHelpText);
         break;
     }

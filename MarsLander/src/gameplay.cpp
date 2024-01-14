@@ -187,6 +187,12 @@ void Gameplay::update(float deltaTime)
 
 						gameEndTimer = 0.0f;
 
+						SaveManager save("savegame");
+						int prevMoonHS = save.getMoonHS();
+						int prevMarsHS = save.getMarsHS();
+						if (sceneManager->getCurrentSceneID() == 10 && prevMoonHS < (int)score) save.saveMoonHS((int)score);
+						else if(sceneManager->getCurrentSceneID() == 20 && prevMarsHS < (int)score) save.saveMarsHS(score);
+
 						sceneManager->setScore((int)score);
 						sceneManager->changeScene(2);
 					}

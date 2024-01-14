@@ -42,6 +42,9 @@
     <ClCompile Include="src\endMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\saveManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\SimplexNoise.h">
@@ -68,6 +71,9 @@
     <ClInclude Include="src\endMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\saveManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Font Include="assets\fonts\retro.ttf" />
@@ -82,5 +88,8 @@
     <Image Include="assets\images\background.jpg">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="saves\savegame" />
   </ItemGroup>
 </Project>

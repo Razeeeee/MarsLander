@@ -32,5 +32,6 @@ public:
     void handleEvent(sf::Event event);
     void reset();
     int getScore() { return score; }
+    int getCurrentSceneID() { return currentSceneID; }
     void setScore(int newScore) { score = newScore; }
 };

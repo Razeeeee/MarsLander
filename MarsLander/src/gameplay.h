@@ -4,6 +4,7 @@
 #include "rigidbody.h"
 #include "gameUI.h"
 #include "sceneManager.h"
+#include "saveManager.h"
 #include <iostream>
 #include <vector>
 

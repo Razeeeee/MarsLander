@@ -2,6 +2,7 @@
 #include "sceneManager.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "saveManager.h"
 
 enum GameState {
 	MainMenu,
@@ -32,6 +33,8 @@ private:
 	sf::Text playButton;
 
 	sf::Text helpContent;
+	sf::Text moonHSText;
+	sf::Text marsHSText;
 
 	sf::Color normalColor;
 	sf::Color hoverColor;
