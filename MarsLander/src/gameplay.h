@@ -3,6 +3,7 @@
 #include "terrain.h"
 #include "rigidbody.h"
 #include "gameUI.h"
+#include "sceneManager.h"
 #include <iostream>
 #include <vector>
 
@@ -13,11 +14,12 @@ struct KeyState
 	bool isRightPressed = false;
 };
 
-class Gameplay
+class Gameplay : public Scene
 {
 private:
 	GameUI* gameUI;
 	sf::RenderWindow* window;
+	SceneManager* sceneManager;
 	KeyState keyState;
 
 	sf::View mainView;
@@ -34,14 +36,24 @@ private:
 
 	float gameEndTimer;
 
+	int levelID = 0;
+
 public:
-	Gameplay(sf::RenderWindow* window);
+	Gameplay(sf::RenderWindow* window, SceneManager* sceneManager);
 
-	void handleEvent(sf::Event event);
+	void handleEvent(sf::Event event) override;
 
-	void update(float deltaTime);
-	void draw();
+	// override Scene update and draw
+	void update(float deltaTime) override;
+	void render() override;
+	int getID() const override;
+	void setID(int id);
+
+	void reset() override;
+
+	void setGravity(float gravity);
 
 	Rigidbody getPlayer() { return *player; }
+	Terrain* getTerrain() { return terrain; }
 
 };

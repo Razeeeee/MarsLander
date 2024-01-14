@@ -140,17 +140,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\endMenu.cpp" />
+    <ClCompile Include="src\menu.cpp" />
     <ClCompile Include="src\gameUI.cpp" />
     <ClCompile Include="src\gameplay.cpp" />
     <ClCompile Include="src\rigidbody.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\sceneManager.cpp" />
     <ClCompile Include="src\SimplexNoise.cpp" />
     <ClCompile Include="src\terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\endMenu.h" />
+    <ClInclude Include="src\menu.h" />
     <ClInclude Include="src\gameUI.h" />
     <ClInclude Include="src\gameplay.h" />
     <ClInclude Include="src\rigidbody.h" />
+    <ClInclude Include="src\sceneManager.h" />
     <ClInclude Include="src\SimplexNoise.h" />
     <ClInclude Include="src\terrain.h" />
   </ItemGroup>
@@ -158,6 +164,7 @@
     <Font Include="assets\fonts\retro.ttf" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="assets\images\background.jpg" />
     <Image Include="assets\sprites\fire.png" />
     <Image Include="assets\sprites\rocket.png" />
   </ItemGroup>

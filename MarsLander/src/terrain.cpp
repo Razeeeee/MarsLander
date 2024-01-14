@@ -46,11 +46,20 @@ Terrain::Terrain(sf::RenderWindow* window) : renderWindow(window)
 	lacunarity = 2.0f;
 	persistence = 0.5f;
 	octaves = 4;
+
+	// Setting the colors
+	// The colors are used to create a gradient for the background and the terrain
+	topBackgroundColor = sf::Color(162, 150, 146, 255);
+	bottomBackgroundColor = sf::Color(213, 202, 186, 255);
+	topTerrainColor = sf::Color(172, 133, 105, 255);
+	bottomTerrainColor = sf::Color(149, 103, 85, 255);
+	terrainLineColor = sf::Color(171, 120, 96, 255);
 }
 
 void Terrain::generateTerrain()
 {
 	std::cout << "Generating terrain..." << std::endl;
+	std::cout << "Amp multi: " << amplitudeModifier << ", freq multi: " << frequencyModifier << std::endl;
 	SimplexNoise noise;
 
 	// Calculate the frequency and amplitude again (could have been changed)
@@ -152,8 +161,8 @@ void Terrain::interpolateLandingZoneEdges()
 void Terrain::renderBackground()
 {
 	// Rendering the background as a vertical gradient
-	sf::Color startColor(162, 150, 146, 255);
-	sf::Color endColor(213, 202, 186, 255);
+	sf::Color startColor = topBackgroundColor;
+	sf::Color endColor = bottomBackgroundColor;
 	sf::VertexArray background(sf::Quads, 4);
 	background[0].position = sf::Vector2f(0, 0);
 	background[1].position = sf::Vector2f(windowWidth, 0);
@@ -173,16 +182,16 @@ void Terrain::renderTerrain()
 		// Rendering the terrain as a series of lines between points in the terrain array
 		sf::Vertex line[] =
 		{
-			sf::Vertex(sf::Vector2f(i, terrainArray[i]), sf::Color(171, 120, 96, 255)),
-			sf::Vertex(sf::Vector2f(i + 1, terrainArray[i + 1]), sf::Color(171, 120, 96, 255))
+			sf::Vertex(sf::Vector2f(i, terrainArray[i]), terrainLineColor),
+			sf::Vertex(sf::Vector2f(i + 1, terrainArray[i + 1]), terrainLineColor)
 		};
 
 		if(i <= landingZones[0] || i >= landingZones[0] + landingSize.x)
 			renderWindow->draw(line, 2, sf::Lines);
 
 		// Filling in the area below the terrain curve with the gradient
-		sf::Color startColor(172, 133, 105, 255);
-		sf::Color endColor(149, 103, 85, 255);
+		sf::Color startColor = topTerrainColor;
+		sf::Color endColor = bottomTerrainColor;
 		sf::VertexArray background(sf::Quads, 4);
 		background[0].position = sf::Vector2f(i, terrainArray[i]);
 		background[1].position = sf::Vector2f(i + 1, terrainArray[i + 1]);
@@ -234,6 +243,7 @@ void Terrain::build()
 
 void Terrain::reset()
 {
+	std::cout << "Resetting terrain..." << std::endl;
 	// Resetting the candidate values
 	candidateValue1 = 1000000.0f;
 	candidateValue2 = 1000000.0f;
@@ -278,4 +288,29 @@ sf::Vector2i Terrain::getLandingSize()
 float Terrain::getTerrainYatX(int x)
 {
 	return terrainArray[x];
+}
+
+void Terrain::setTopBackgroundColor(sf::Color topBackgroundColor)
+{
+	this->topBackgroundColor = topBackgroundColor;
+}
+
+void Terrain::setBottomBackgroundColor(sf::Color bottomBackgroundColor)
+{
+	this->bottomBackgroundColor = bottomBackgroundColor;
+}
+
+void Terrain::setTopTerrainColor(sf::Color topTerrainColor)
+{
+	this->topTerrainColor = topTerrainColor;
+}
+
+void Terrain::setBottomTerrainColor(sf::Color bottomTerrainColor)
+{
+	this->bottomTerrainColor = bottomTerrainColor;
+}
+
+void Terrain::setTerrainLineColor(sf::Color terrainLineColor)
+{
+	this->terrainLineColor = terrainLineColor;
 }

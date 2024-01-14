@@ -33,6 +33,15 @@
     <ClCompile Include="src\gameUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\sceneManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\menu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\endMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\SimplexNoise.h">
@@ -50,6 +59,15 @@
     <ClInclude Include="src\gameUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\sceneManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\menu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\endMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Font Include="assets\fonts\retro.ttf" />
@@ -59,6 +77,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="assets\sprites\fire.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\images\background.jpg">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

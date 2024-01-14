@@ -25,6 +25,12 @@ public:
 	void setFrequencyModifier(float frequencyModifier);
 	void setAmplitudeModifier(float amplitudeModifier);
 
+	void setTopBackgroundColor(sf::Color topBackgroundColor);
+	void setBottomBackgroundColor(sf::Color bottomBackgroundColor);
+	void setTopTerrainColor(sf::Color topTerrainColor);
+	void setBottomTerrainColor(sf::Color bottomTerrainColor);
+	void setTerrainLineColor(sf::Color terrainLineColor);
+
 private:
 	// Terrain generation and landing zone candidate finding
 	void generateTerrain();
@@ -59,5 +65,10 @@ private:
 	float lacunarity;
 	float persistence;
 	int octaves;
-};
 
+	sf::Color topBackgroundColor;
+	sf::Color bottomBackgroundColor;
+	sf::Color topTerrainColor;
+	sf::Color bottomTerrainColor;
+	sf::Color terrainLineColor;
+};

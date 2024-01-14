@@ -21,4 +21,3 @@ public:
 	void update(sf::Vector2f velocity, float altitude, float fuel, float score);
 	void draw();
 };
-

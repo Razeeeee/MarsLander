@@ -1,6 +1,6 @@
 #include "gameplay.h"
 
-Gameplay::Gameplay(sf::RenderWindow* window) : window(window)
+Gameplay::Gameplay(sf::RenderWindow* window, SceneManager* sceneManager) : window(window), sceneManager(sceneManager)
 {
 	// Setting up the game UI
 	gameUI = new GameUI(window);
@@ -26,8 +26,8 @@ Gameplay::Gameplay(sf::RenderWindow* window) : window(window)
 
 	// Creating and building the terrain
 	terrain = new Terrain(window);
-	terrain->setAmplitudeModifier(0.3f);
-	terrain->setFrequencyModifier(2137.0f);
+	terrain->setAmplitudeModifier(0.4f);
+	terrain->setFrequencyModifier(2000.0f);
 	terrain->build();
 	
 	// Getting the landing zones from the terrain
@@ -57,6 +57,18 @@ Gameplay::Gameplay(sf::RenderWindow* window) : window(window)
 	player->setMass(500.0f + fuel);
 
 	gameEndTimer = 0.0f;
+}
+
+int Gameplay::getID() const
+{
+	return levelID;
+}
+
+// set id
+void Gameplay::setID(int id)
+{
+	std::cout << "Setting id: " << id << std::endl;
+	this->levelID = id;
 }
 
 void Gameplay::update(float deltaTime)
@@ -115,7 +127,7 @@ void Gameplay::update(float deltaTime)
 				{
 					if (playerPos.x - playerSize.x / 2 < landingZones[p] || playerPos.x + playerSize.x / 2 > landingZones[p] + landingZoneWidth)
 					{
-						std::cout << "CRASHED" << std::endl;
+						std::cout << "CRASHED due to landing zone offset" << std::endl;
 						player->setPosition(sf::Vector2f(window->getSize().x / 6, window->getSize().y / 6));
 						player->setAcceleration(sf::Vector2f(0, 0));
 						player->setAngularVelocity(0);
@@ -134,7 +146,7 @@ void Gameplay::update(float deltaTime)
 					
 					if (player->getVelocity().x > 10.0f || player->getVelocity().x < -10.0f || player->getVelocity().y > 10.0f || player->getVelocity().y < -10.0f || player->getRotation() > 10.0f || player->getRotation() > 350.0f)
 					{
-						std::cout << "CRASHED" << std::endl;
+						std::cout << "CRASHED due to speed/rotation" << std::endl;
 						player->setPosition(sf::Vector2f(window->getSize().x / 6, window->getSize().y / 6));
 						player->setAcceleration(sf::Vector2f(0, 0));
 						player->setAngularVelocity(0);
@@ -171,23 +183,12 @@ void Gameplay::update(float deltaTime)
 					gameEndTimer += deltaTime;
 					if (gameEndTimer > 10.0f)
 					{
-						std::cout << "LANDED" << std::endl;
-						player->setPosition(sf::Vector2f(window->getSize().x / 6, window->getSize().y / 6));
-						player->setAcceleration(sf::Vector2f(0, 0));
-						player->setAngularVelocity(0);
-						player->setAngularAcceleration(0);
-						player->setVelocity(sf::Vector2f(100.0f, 0));
-						player->setRotation(270);
-						player->setDrag(0.03f);
-
-						fuel = 100.0f;
-						score = 0.0f;
-						thrust = 0.0f;
-						player->setMass(500.0f + fuel);
+						std::cout << "LANDED with score " << (int)score << std::endl;
 
 						gameEndTimer = 0.0f;
 
-						return;
+						sceneManager->setScore((int)score);
+						sceneManager->changeScene(2);
 					}
 				}
 			}
@@ -202,7 +203,7 @@ void Gameplay::update(float deltaTime)
 	{
 		if (corners[i].y > terrain->getTerrainYatX(corners[i].x))
 		{
-			std::cout << "CRASHED" << std::endl;
+			std::cout << "CRASHED due to terrain" << std::endl;
 			// If collided with terrain, reset player to starting state
 			player->setPosition(sf::Vector2f(window->getSize().x / 6, window->getSize().y / 6));
 			player->setAcceleration(sf::Vector2f(0, 0));
@@ -254,7 +255,7 @@ void Gameplay::update(float deltaTime)
 	gameUI->update(player->getVelocity(), altitudeAboveTerrain, fuel, score);
 }
 
-void Gameplay::draw()
+void Gameplay::render()
 {
 	// Initial window clearing
 	window->clear();
@@ -278,9 +279,6 @@ void Gameplay::draw()
 	terrain->renderLandingZones();
 	player->draw();
 	// Draw outline around zoomed view
-
-	// Dispalying
-	window->display();
 }
 
 // Handling events
@@ -305,6 +303,11 @@ void Gameplay::handleEvent(sf::Event event)
 		{
 			keyState.isRightPressed = true;
 		}
+
+		if (event.key.code == sf::Keyboard::Escape)
+		{
+			sceneManager->changeScene(1);
+		}
 	}
 	if (event.type == sf::Event::KeyReleased)
 	{
@@ -321,4 +324,35 @@ void Gameplay::handleEvent(sf::Event event)
 			keyState.isRightPressed = false;
 		}
 	}
+}
+
+// implement reset
+void Gameplay::reset()
+{
+	// Resetting player state
+	player->setPosition(sf::Vector2f(window->getSize().x / 6, window->getSize().y / 6));
+	player->setAcceleration(sf::Vector2f(0, 0));
+	player->setAngularVelocity(0);
+	player->setAngularAcceleration(0);
+	player->setVelocity(sf::Vector2f(100.0f, 0));
+	player->setRotation(270);
+	player->setDrag(0.03f);
+
+	fuel = 100.0f;
+	score = 0.0f;
+	thrust = 0.0f;
+	player->setMass(500.0f + fuel);
+
+	// Resetting terrain
+	terrain->reset();
+
+	// Resetting landing zones
+	delete[] landingZones;
+	landingZones = new int[3];
+	terrain->getLandingZones(landingZones);
+}
+
+void Gameplay::setGravity(float gravity)
+{
+	player->setForce(sf::Vector2f(0, gravity));
 }
