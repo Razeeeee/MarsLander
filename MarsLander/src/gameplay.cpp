@@ -82,6 +82,19 @@ void Gameplay::update(float deltaTime)
     sf::Vector2f playerPos = player->getPosition();
     sf::Vector2f playerSize = player->getBoundingBoxSize();
 
+	if (playerPos.x > window->getSize().x * 0.55f && playerPos.y < window->getSize().y * 0.45f)
+	{
+		// set zoomView on the left
+		zoomView.setViewport(sf::FloatRect(0.0f, 0.0f, 0.4f, 0.4f));
+		zoomViewOutline.setPosition(window->getSize().x * 0.2f, window->getSize().y * 0.2f);
+	}
+	else
+	{
+		// set zoomView on the right (like in the constructor)
+		zoomView.setViewport(sf::FloatRect(0.6f, 0.0f, 0.4f, 0.4f));
+		zoomViewOutline.setPosition(window->getSize().x * 0.8f, window->getSize().y * 0.2f);
+	}
+
     int landingZoneWidth = terrain->getLandingSize().x;
 
 	// Calculating the player's cos(rotation) and sin(rotation) 
@@ -258,7 +271,7 @@ void Gameplay::update(float deltaTime)
 	// Updating the player's rigidbody
     player->update(deltaTime);
 	// Updating the game UI
-	gameUI->update(player->getVelocity(), altitudeAboveTerrain, fuel, score);
+	gameUI->update(player->getVelocity(), altitudeAboveTerrain, fuel, score, playerPos);
 }
 
 void Gameplay::render()
@@ -313,6 +326,11 @@ void Gameplay::handleEvent(sf::Event event)
 		if (event.key.code == sf::Keyboard::Escape)
 		{
 			sceneManager->changeScene(1);
+		}
+
+		if (event.key.code == sf::Keyboard::F7)
+		{
+			reset();
 		}
 	}
 	if (event.type == sf::Event::KeyReleased)

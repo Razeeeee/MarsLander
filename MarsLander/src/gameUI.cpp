@@ -40,7 +40,7 @@ GameUI::GameUI(sf::RenderWindow* window) : window(window)
 	fuelBar.setOrigin(fuelBar.getSize().x / 2, fuelBar.getSize().y);
 	fuelBar.setPosition(20, window->getSize().y / 2 - fuelBar.getSize().y / 2);
 	fuelBar.setFillColor(sf::Color::White);
-	fuelBar.rotate(180);
+	fuelBar.rotate(180.0f);
 
 	// Setting up the fuel bar outline
 	fuelBarOutline = sf::RectangleShape(sf::Vector2f(20.0f, window->getSize().y / 2));
@@ -51,8 +51,43 @@ GameUI::GameUI(sf::RenderWindow* window) : window(window)
 	fuelBarOutline.setOutlineThickness(4.0f);
 }
 
-void GameUI::update(sf::Vector2f velocity, float altitudeAboveTerrain, float fuel, float score)
+void GameUI::update(sf::Vector2f velocity, float altitudeAboveTerrain, float fuel, float score, sf::Vector2f position)
 {
+	if (position.x > window->getSize().x * 0.55f && position.y < window->getSize().y * 0.45f)
+	{
+		// set origin of text to the right
+		horizontalSpeedText.setOrigin(horizontalSpeedText.getLocalBounds().width, 0);
+		verticalSpeedText.setOrigin(verticalSpeedText.getLocalBounds().width, 0);
+		altitudeText.setOrigin(altitudeText.getLocalBounds().width, 0);
+		scoreText.setOrigin(scoreText.getLocalBounds().width, 0);
+		// set position of text to the right
+		horizontalSpeedText.setPosition(window->getSize().x - 10, 10);
+		verticalSpeedText.setPosition(window->getSize().x - 10, 46);
+		altitudeText.setPosition(window->getSize().x - 10, 82);
+		scoreText.setPosition(window->getSize().x - 10, 118);
+
+		// set fuel bar origin to the right
+		fuelBar.setPosition(window->getSize().x - 20, window->getSize().y / 2 - fuelBarOutline.getSize().y / 2);
+		fuelBarOutline.setPosition(window->getSize().x - 20, window->getSize().y / 2 + fuelBarOutline.getSize().y / 2);
+	}
+	else
+	{
+		// set origin of text to the left
+		horizontalSpeedText.setOrigin(0, 0);
+		verticalSpeedText.setOrigin(0, 0);
+		altitudeText.setOrigin(0, 0);
+		scoreText.setOrigin(0, 0);
+		// set position of text to the left
+		horizontalSpeedText.setPosition(10, 10);
+		verticalSpeedText.setPosition(10, 46);
+		altitudeText.setPosition(10, 82);
+		scoreText.setPosition(10, 118);
+
+		// set fuel bar origin to the left
+		fuelBar.setPosition(20, window->getSize().y / 2 - fuelBarOutline.getSize().y / 2);
+		fuelBarOutline.setPosition(20, window->getSize().y / 2 + fuelBarOutline.getSize().y / 2);
+	}
+
 	// Calculating the absolute value of the velocity as an integer
 	sf::Vector2i velocityIntAbs = sf::Vector2i(std::abs(velocity.x), std::abs(velocity.y));
 	// Updating the text

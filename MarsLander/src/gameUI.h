@@ -18,6 +18,6 @@ private:
 
 public:
 	GameUI(sf::RenderWindow* window);
-	void update(sf::Vector2f velocity, float altitude, float fuel, float score);
+	void update(sf::Vector2f velocity, float altitude, float fuel, float score, sf::Vector2f position);
 	void draw();
 };
