@@ -141,18 +141,7 @@ void Gameplay::update(float deltaTime)
 					if (playerPos.x - playerSize.x / 2 < landingZones[p] || playerPos.x + playerSize.x / 2 > landingZones[p] + landingZoneWidth)
 					{
 						std::cout << "CRASHED due to landing zone offset" << std::endl;
-						player->setPosition(sf::Vector2f(window->getSize().x / 6, window->getSize().y / 6));
-						player->setAcceleration(sf::Vector2f(0, 0));
-						player->setAngularVelocity(0);
-						player->setAngularAcceleration(0);
-						player->setVelocity(sf::Vector2f(100.0f, 0));
-						player->setRotation(270);
-						player->setDrag(0.03f);
-
-						fuel = 100.0f;
-						score = 0.0f;
-						thrust = 0.0f;
-						player->setMass(500.0f + fuel);
+						reset();
 
 						return;
 					}
@@ -160,18 +149,7 @@ void Gameplay::update(float deltaTime)
 					if (player->getVelocity().x > 10.0f || player->getVelocity().x < -10.0f || player->getVelocity().y > 10.0f || player->getVelocity().y < -10.0f || player->getRotation() > 10.0f || player->getRotation() > 350.0f)
 					{
 						std::cout << "CRASHED due to speed/rotation" << std::endl;
-						player->setPosition(sf::Vector2f(window->getSize().x / 6, window->getSize().y / 6));
-						player->setAcceleration(sf::Vector2f(0, 0));
-						player->setAngularVelocity(0);
-						player->setAngularAcceleration(0);
-						player->setVelocity(sf::Vector2f(100.0f, 0));
-						player->setRotation(270);
-						player->setDrag(0.03f);
-
-						fuel = 100.0f;
-						score = 0.0f;
-						thrust = 0.0f;
-						player->setMass(500.0f + fuel);
+						reset();
 
 						return;
 					}	
@@ -188,14 +166,14 @@ void Gameplay::update(float deltaTime)
 					float distanceFromCenterY = std::abs(playerPos.y - window->getSize().y / 3);
 					float distanceFromCenter = std::sqrt(distanceFromCenterX * distanceFromCenterX + distanceFromCenterY * distanceFromCenterY);
 
-					score = (distanceFromCenter * 0.25f + fuel) * 100.0f;
-					
 					keyState.isUpPressed = false;
 					keyState.isLeftPressed = false;
 					keyState.isRightPressed = false;
 					gameEndTimer += deltaTime;
 					if (gameEndTimer > 10.0f)
 					{
+						score += (distanceFromCenter * 0.25f + fuel) * 100.0f;
+
 						std::cout << "LANDED with score " << (int)score << std::endl;
 
 						gameEndTimer = 0.0f;
@@ -269,7 +247,7 @@ void Gameplay::update(float deltaTime)
     }
 
 	// Updating the player's rigidbody
-    player->update(deltaTime);
+    player->update(deltaTime, &score);
 	// Updating the game UI
 	gameUI->update(player->getVelocity(), altitudeAboveTerrain, fuel, score, playerPos);
 }
@@ -361,6 +339,7 @@ void Gameplay::reset()
 	player->setVelocity(sf::Vector2f(100.0f, 0));
 	player->setRotation(270);
 	player->setDrag(0.03f);
+	player->setHasFlippedForwards(false);
 
 	fuel = 100.0f;
 	score = 0.0f;

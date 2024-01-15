@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <iostream>
 
 class Rigidbody
 {
@@ -13,7 +14,6 @@ private:
 
 	sf::Shape* fireShape;
 	sf::Texture* fireTexture;
-
 
 	// Kinematics and dynamics variables
 	sf::Vector2f position;
@@ -35,10 +35,12 @@ private:
 
 	sf::Vector2f upVector;
 
+	bool hasFlippedClockwise = false;
+
 public:
 	Rigidbody(sf::Shape* shape, sf::RenderWindow* window);
 
-	void update(float dt);
+	void update(float dt, float* score);
 	void draw();
 
 	void setPosition(sf::Vector2f position);
@@ -82,4 +84,5 @@ public:
 
 	sf::Vector2f getBoundingBoxSize();
 	void setFillColor(sf::Color color);
+	void setHasFlippedForwards(bool hasFlippedForwards);
 };

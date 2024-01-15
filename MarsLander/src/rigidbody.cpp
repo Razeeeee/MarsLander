@@ -42,7 +42,7 @@ Rigidbody::Rigidbody(sf::Shape* shape, sf::RenderWindow* window) : shape(shape),
 	boundingBoxSize = sf::Vector2f(boundingBoxSize.x, boundingBoxSize.x * shapeTextureProportions * 0.975f);
 }
 
-void Rigidbody::update(float dt)
+void Rigidbody::update(float dt, float* score)
 {
 	// Calculate upVector
 	upVector = sf::Vector2f(sin(rotation * 3.14159f / 180), -cos(rotation * 3.14159f / 180));
@@ -69,10 +69,19 @@ void Rigidbody::update(float dt)
 	// Calculate rotation
 	rotation += angularVelocity * dt;
 
-	// Keep rotation between 0 and 360
-	while (rotation > 360)
+	std::cout << "Rotation: " << rotation << std::endl;
+
+	// If player does a full flip, add 1000 score but only for the 2nd flip clockwise
+	if (rotation > 360)
 	{
+		if(hasFlippedClockwise) *score += 1000;
 		rotation -= 360;
+		hasFlippedClockwise = true;
+	}
+	else if (rotation < -360)
+	{
+		*score += 1000;
+		rotation += 360;
 	}
 
 	// Reset impulse forces and torques
@@ -269,4 +278,9 @@ sf::Vector2f Rigidbody::getBoundingBoxSize()
 void Rigidbody::setFillColor(sf::Color color)
 {
 	shape->setFillColor(color);
+}
+
+void Rigidbody::setHasFlippedForwards(bool hasFlippedForwards)
+{
+	this->hasFlippedClockwise = hasFlippedForwards;
 }
